@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learning Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Login Modal Styles */
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .logo {
+            font-size: 2.5rem;
+            color: #4a90e2;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #333;
+            opacity: 0.8;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .form-group .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .form-group.error input {
+            border-color: #dc3545;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .login-button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-button.primary {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .login-button.secondary {
+            background-color: #eee;
+            color: #333;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #eee;
+            border-top: 4px solid #4a90e2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            color: #28a745;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        /* Introduction Section Styles */
+        .intro-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .intro-section .logo {
+            font-size: 4rem;
+            color: #4a90e2;
+            margin-bottom: 1.5rem;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .intro-section h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .intro-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            color: #4a90e2;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-item p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #4a90e2, #357ABD);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .start-button i {
+            transition: transform 0.3s ease;
+        }
+
+        .start-button:hover i {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .intro-section h1 {
+                font-size: 2rem;
+            }
+
+            .intro-text {
+                font-size: 1rem;
+            }
+        }
+
+        /* Add styles for the new layout */
+        .main-content-area {
+            display: flex;
+            gap: 20px; /* Space between left nav and right content */
+            margin-top: 20px; /* Space below header */
+        }
+
+        .left-nav {
+            width: 250px; /* Fixed width for left navigation */
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .left-nav .nav-title {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4a90e2;
+            padding-bottom: 10px;
+        }
+
+        .subject-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .subject-list li {
+            cursor: pointer;
+            padding: 10px 0;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .subject-list li:hover {
+            color: #4a90e2;
+        }
+
+        .grade-list {
+            list-style: none;
+            padding-left: 20px; /* Indent grades */
+            margin-top: 5px;
+            border-left: 2px solid #eee;
+        }
+
+        .grade-list li {
+            cursor: pointer;
+            padding: 5px 0;
+            color: #666;
+            font-weight: 400;
+            transition: color 0.2s ease;
+        }
+
+        .grade-list li:hover {
+            color: #4a90e2;
+        }
+
+        .right-content {
+            flex-grow: 1; /* Take up remaining space */
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Space between chatbot/button and tests */
+        }
+
+        .section-toggle-button {
+            background: linear-gradient(135deg, #4a90e2, #357ABD);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 20px; /* Space below the button */
+        }
+
+        .section-toggle-button:hover {
+             transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+         .chatbot-section {
+             background-color: #fff;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+         }
+
+        .curriculum-display {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+             margin-top: 20px; /* Space above curriculum display */
+        }
+
+        .curriculum-display h2 {
+             color: #333;
+             margin-bottom: 15px;
+             border-bottom: 2px solid #4a90e2;
+             padding-bottom: 10px;
+        }
+
+        .curriculum-display p {
+            color: #555;
+        }
+
+
+         /* Ensure tests section also has some styling */
+         .tests-section {
+             background-color: #fff;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+         }
+
+         /* Adjust existing intro section to fit into the page flow */
+         .intro-section {
+             text-align: center;
+             padding: 4rem 0; /* More padding for a central focus */
+             max-width: 900px; /* Limit width */
+             margin: 20px auto; /* Center it and add space */
+             background-color: #fff;
+             border-radius: 15px;
+             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+         }
+
+
+        @media (max-width: 768px) {
+            .main-content-area {
+                flex-direction: column; /* Stack elements on small screens */
+            }
+
+            .left-nav {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+
+        /* General Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: flex; /* Use flexbox for centering */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 400px; /* Set max width for smaller modal */
+            width: 90%; /* Responsive width */
+            position: relative; /* Needed for close button positioning */
+        }
+
+        .modal-content.login-container {
+             max-width: 400px; /* Specific max width for login modal */
+             width: 90%;
+             padding: 30px;
+        }
+
+        .login-section {
+            width: 100%; /* Ensure login section takes full width in modal */
+        }
+
+        /* Close Button */
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #777;
+            text-decoration: none;
+        }
+
+        /* Refined Form Styles for Modals */
+        .modal-content .form-group {
+            margin-bottom: 1.5rem; /* More space between form groups */
+        }
+
+        .modal-content .form-group label {
+            font-size: 1rem; /* Slightly larger labels */
+            margin-bottom: 0.6rem;
+            display: block; /* Ensure label is on its own line */
+            color: #555;
+        }
+
+        .modal-content .form-group input[type="email"],
+        .modal-content .form-group input[type="password"] {
+            width: calc(100% - 24px); /* Adjust for padding */
+            padding: 12px;
+            border: 1px solid #ccc; /* Lighter border */
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .modal-content .form-group input[type="email"]:focus,
+        .modal-content .form-group input[type="password"]:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            outline: none;
+        }
+
+        .modal-content .password-input {
+            position: relative;
+            display: flex; /* Align input and icon */
+            align-items: center;
+        }
+
+         .modal-content .password-input input {
+            flex-grow: 1; /* Allow input to take available space */
+            padding-right: 40px; /* Make space for the icon */
+        }
+
+        .modal-content .toggle-password {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-content .login-buttons {
+            margin-top: 2rem; /* More space above buttons */
+            flex-direction: column; /* Stack buttons */
+            gap: 1rem; /* Space between stacked buttons */
+        }
+
+         .modal-content .login-button {
+            width: 100%; /* Full width buttons */
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px; /* Slightly less rounded */
+        }
+
+         .modal-content .login-button.primary {
+            background: linear-gradient(135deg, #5cb85c, #4cae4c); /* Greenish gradient for primary action */
+        }
+
+         .modal-content .login-button.secondary {
+            background-color: #f0f0f0; /* Light grey background */
+            color: #555;
+            border: 1px solid #ccc;
+        }
+
+        /* Ensure intro section in modal is hidden */
+         .modal .intro-section {
+            display: none !important;
+        }
+
+    </style>
+    <style>
+        /* Styles for the movable AI button */
+        .movable-ai-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90ee, #624add);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .movable-ai-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .movable-ai-button i {
+            pointer-events: none; /* Allow clicks to pass through to the button */
+        }
+    </style>
+    <style>
+        /* Styles for the Results Section */
+        .results { /* Class này được sử dụng làm container tổng cho kết quả */
+            /* Bạn có thể thêm padding hoặc margin cho toàn bộ phần kết quả */
+        }
+
+        .score-summary {
+            text-align: center;
+            /* Sử dụng gradient màu tím như ảnh */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px; /* Bo góc */
+            margin-bottom: 30px;
+        }
+
+        .score-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: bold; /* Làm nổi bật tiêu đề */
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .score-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 16px; /* Cỡ chữ cho Đúng/Sai/Điểm */
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-item div:first-child { /* Số lượng câu đúng/sai, điểm */
+            font-size: 24px; /* Cỡ chữ lớn hơn cho số */
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+
+        /* Styles for detailed question results (using existing question styles but overriding/adding) */
+        /* Re-using .question, .question-number, .question-text, .options classes from the quiz part */
+
+        .question {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db; /* Màu xanh cho viền trái */
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #3498db; /* Màu xanh */
+            margin-bottom: 10px;
+            font-size: 18px; /* Cỡ chữ bạn muốn */
+            /* Add text-shadow to mimic the effect in the image */
+            text-shadow: 0 0 4px #3498db, 0 0 8px #3498db, 0 0 12px #3498db, 0 0 16px #3498db; /* Refined blue glow effect */
+        }
+
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            /* Giữ các style cơ bản của option làm bài */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            /* Xóa cursor, transition, border hover nếu đây là kết quả */
+            cursor: default;
+            transition: none;
+            border: 2px solid transparent; /* Viền mặc định trong suốt */
+        }
+
+        .option input[type="radio"] { /* Ẩn hoặc làm mờ radio button trong kết quả */
+            display: none; /* Ẩn hẳn radio button trong kết quả */
+        }
+
+        .option.correct { /* Đáp án đúng */
+            background: #d4edda; /* Nền xanh lá nhạt */
+            border-color: #28a745; /* Viền xanh lá đậm */
+            color: #155724; /* Chữ xanh lá đậm */
+            font-weight: bold; /* Chữ đậm */
+        }
+
+        .option.incorrect { /* Đáp án sai người dùng chọn */
+            background: #f8d7da; /* Nền đỏ nhạt */
+            border-color: #dc3545; /* Viền đỏ đậm */
+            color: #721c24; /* Chữ đỏ đậm */
+            font-weight: bold; /* Chữ đậm */
+        }
+
+        .option.user-selected { /* Đáp án mà người dùng đã chọn (áp dụng cả khi đúng hoặc sai) */
+            /* Có thể thêm style đặc biệt nếu muốn, ví dụ viền vàng */
+             border-color: #ffc107;
+             /* background: #fff3cd; */ /* Nền vàng nhạt */
+        }
+
+        .explanation { /* Giải thích đáp án sai */
+            background: #fff8e1; /* Nền vàng rất nhạt */
+            border-left: 4px solid #ffc107; /* Viền trái màu vàng */
+            padding: 15px;
+            margin-top: 15px; /* Khoảng cách với đáp án */
+            border-radius: 0 8px 8px 0; /* Chỉ bo góc bên phải */
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #f57c00; /* Màu cam */
+            margin-bottom: 8px;
+        }
+
+        .explanation-content {
+            color: #5d4037; /* Màu nâu xám */
+            line-height: 1.6;
+            font-style: italic; /* Nghiêng chữ giải thích */
+        }
+
+        .restart-btn { /* Nút làm lại bài */
+            background: linear-gradient(135deg, #28a745, #20c997); /* Gradient xanh lá */
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px; /* Nút hình bầu dục */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block; /* Hiển thị dạng block để căn giữa dễ hơn */
+            margin: 30px auto; /* Căn giữa */
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px); /* Hiệu ứng nhấc lên khi hover */
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3); /* Đổ bóng */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Admin Toggle Button -->
+        <!-- Removed: <button class="admin-toggle" onclick="toggleAdminPanel()" title="Quản lý dữ liệu AI">⚙️</button> -->
+        
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="admin-panel">
+            <h3 style="color: #333; margin-bottom: 1rem; border-bottom: 2px solid #667eea; padding-bottom: 0.5rem;">
+                🧠 Quản lý kiến thức AI
+            </h3>
+            
+            <div class="knowledge-stats">
+                <div style="font-size: 1.1rem; font-weight: bold;">Tổng kiến thức: <span id="totalKnowledge">0</span></div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">Cập nhật lần cuối: <span id="lastUpdate">Chưa có</span></div>
+            </div>
+            
+            <div class="knowledge-form">
+                <div class="form-group">
+                    <label>Môn học:</label>
+                    <select id="knowledgeSubject" class="form-group input" style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                        <option value="math">Toán học</option>
+                        <option value="physics">Vật lý</option>
+                        <option value="chemistry">Hóa học</option>
+                        <option value="english">Tiếng Anh</option>
+                        <option value="literature">Văn học</option>
+                        <option value="general">Tổng quát</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Từ khóa/Câu hỏi:</label>
+                    <input type="text" id="knowledgeKeyword" placeholder="VD: phương trình bậc 2, định luật Newton..." 
+                           style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Câu trả lời:</label>
+                    <textarea id="knowledgeAnswer" placeholder="Nhập câu trả lời chi tiết..." class="form-textarea"></textarea>
+                </div>
+                
+                <button onclick="addKnowledge()" style="width: 100%; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer; margin-bottom: 1rem;">
+                    ➕ Thêm kiến thức
+                </button>
+            </div>
+            
+            <input type="text" id="searchKnowledge" placeholder="🔍 Tìm kiến thức..." class="search-knowledge" oninput="filterKnowledge()">
+            
+            <div class="subject-filter">
+                <button class="filter-btn active" onclick="filterBySubject('all')">Tất cả</button>
+                <button class="filter-btn" onclick="filterBySubject('math')">Toán</button>
+                <button class="filter-btn" onclick="filterBySubject('physics')">Lý</button>
+                <button class="filter-btn" onclick="filterBySubject('chemistry')">Hóa</button>
+                <button class="filter-btn" onclick="filterBySubject('english')">Anh</button>
+                <button class="filter-btn" onclick="filterBySubject('literature')">Văn</button>
+            </div>
+            
+            <div id="knowledgeList" style="max-height: 200px; overflow-y: auto;">
+                <!-- Danh sách kiến thức sẽ được thêm vào đây -->
+            </div>
+        </div>
+
+        <header>
+            <div class="logo">🤖 AI Learning Assistant</div>
+            <div class="auth-buttons">
+                <button class="btn btn-login" onclick="showLoginModal()">Đăng nhập</button>
+                <button class="btn btn-register" onclick="showRegisterModal()">Đăng ký</button>
+            </div>
+        </header>
+
+        <!-- Initial Introduction Section -->
+        <div id="introSection" class="intro-section">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h1>AI Learning Assistant</h1>
+            <div class="intro-content">
+                <p class="intro-text">
+                    Chào mừng bạn đến với AI Learning Assistant - Trợ lý học tập thông minh được phát triển bởi đội ngũ sinh viên Phenikaa University!
+                </p>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-brain"></i>
+                        <h3>Trí Tuệ Nhân Tạo Tiên Tiến</h3>
+                        <p>Ứng dụng công nghệ AI hiện đại để cung cấp trải nghiệm học tập cá nhân hóa, giúp bạn tiếp thu kiến thức hiệu quả hơn.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Đa Dạng Môn Học</h3>
+                        <p>Hỗ trợ học tập toàn diện với các môn học chính: Toán, Lý, Hóa, Anh, Văn và nhiều chủ đề khác.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-comments"></i>
+                        <h3>Tương Tác Thông Minh</h3>
+                        <p>Trò chuyện trực tiếp với AI để giải đáp thắc mắc, nhận gợi ý học tập và luyện tập kiến thức.</p>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1000+</span>
+                        <span class="stat-label">Người Dùng</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">5000+</span>
+                        <span class="stat-label">Câu Hỏi</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Độ Chính Xác</span>
+                    </div>
+                </div>
+                <button class="start-button" onclick="showMainContent()">
+                    Bắt Đầu Học Tập Ngay
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area (hidden initially, shown after intro) -->
+        <div id="mainContentArea" class="main-content-area" style="display: none;">
+            <!-- Left Navigation (Subjects/Grades) -->
+            <div class="left-nav">
+                <h3 class="nav-title">📚 Môn học</h3>
+                <ul class="subject-list">
+                </ul>
+            </div>
+
+            <!-- Right Content Area (Chatbot Button/Expanded and Tests) -->
+            <div class="right-content">
+                 <!-- AI Assistant Button -->
+                <button id="toggleChatbotBtn" class="section-toggle-button" onclick="toggleChatbot()" style="display: none;">
+                    💬 Trợ lý AI
+                </button>
+
+                <!-- Chatbot Section (initially hidden) -->
+                <div id="chatbotSection" class="chatbot-section" style="display: none;">
+                    <h2 class="section-title">💬 Trợ lý AI</h2>
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="welcome-message">
+                                Chào mừng bạn đến với AI Learning Assistant! <br>
+                                Hãy đăng nhập để bắt đầu trò chuyện với trợ lý AI.
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="messageInput" placeholder="Nhập câu hỏi của bạn..." disabled>
+                            <button onclick="sendMessage()" disabled id="sendBtn">Gửi</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tests Section -->
+                <div class="tests-section">
+                    <h2 class="section-title">Bài kiểm tra</h2>
+                </div>
+
+                <!-- Curriculum Display Area (Placeholder) -->
+                <div id="curriculumDisplay" class="curriculum-display">
+                    <!-- Curriculum content will be loaded here -->
+                    <h2>Chương trình học</h2>
+                    <p>Chọn một môn học và lớp để xem chương trình học.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content login-container">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <div class="login-section">
+                <div class="login-header">
+                    <div class="logo">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>AI Learning Assistant</h2>
+                    <p>Đăng nhập để bắt đầu học tập</p>
+                </div>
+
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" id="loginEmail" placeholder="Nhập email của bạn" required>
+                        <div class="error-message">Vui lòng nhập email hợp lệ</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i>
+                            Mật khẩu
+                        </label>
+                        <div class="password-input">
+                            <input type="password" id="loginPassword" placeholder="Nhập mật khẩu" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+                        </div>
+                        <div class="error-message">Vui lòng nhập mật khẩu</div>
+                    </div>
+
+                    <div class="login-buttons">
+                        <button type="submit" class="login-button primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Đăng nhập
+                        </button>
+                        <button type="button" class="login-button secondary" onclick="showRegisterModal()">
+                            <i class="fas fa-user-plus"></i>
+                            Đăng ký tài khoản
+                        </button>
+                    </div>
+                </form>
+
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Đang xử lý...</p>
+                </div>
+
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Đăng nhập thành công!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #333;">Đăng ký</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="registerName">Họ tên:</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mật khẩu:</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận mật khẩu:</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <button type="submit" class="form-submit">Đăng ký</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Test Modal -->
+    <div id="testModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close" onclick="closeModal('testModal')">&times;</span>
+            <h2 id="testTitle" style="margin-bottom: 1.5rem; color: #333;">Bài kiểm tra</h2>
+            
+            <div id="testInfo" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <div>Thời gian: <span id="testTime">30</span> phút</div>
+                    <div>Số câu: <span id="testQuestions">15</span></div>
+                </div>
+                <div id="testTimer" style="text-align: center; font-size: 1.2rem; font-weight: bold; color: #e53e3e;">
+                    Thời gian còn lại: <span id="timeRemaining">30:00</span>
+                </div>
+            </div>
+
+            <div id="testContent" style="max-height: 500px; overflow-y: auto;">
+                <!-- Questions will be loaded here -->
+            </div>
+
+            <!-- THÊM PHẦN NÀY VÀO: Container để hiển thị kết quả -->
+            <div id="testResultContent" style="display: none; max-height: 500px; overflow-y: auto;">
+                <!-- Test results will be loaded here by test.js -->
+            </div>
+
+            <div style="margin-top: 1rem; text-align: center;">
+                <!-- THÊM ID "submitTestButton" VÀO NÚT NỘP BÀI -->
+                <button onclick="submitTest()" id="submitTestButton" class="form-submit" style="width: 200px;">Nộp bài</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movable AI Button -->
+    <div id="movableAIButton" class="movable-ai-button" title="Trợ lý AI">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="calculator.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="admin.js"></script>
+    <script src="test.js"></script>
+    <script src="main.js"></script>
+    <script src="learningData.js"></script>
+    <script>
+        // Kiểm tra đăng nhập khi trang được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = localStorage.getItem('user');
+            if (!user) {
+                // Nếu chưa đăng nhập, hiển thị intro và ẩn main content area
+                document.getElementById('introSection').style.display = 'block';
+                document.getElementById('mainContentArea').style.display = 'none';
+                 // Hide login/register buttons in header
+                document.querySelector('.auth-buttons').style.display = 'block'; // Keep buttons visible initially
+            } else {
+                // Nếu đã đăng nhập, ẩn intro và hiển thị main content area
+                document.getElementById('introSection').style.display = 'none';
+                document.getElementById('mainContentArea').style.display = 'flex'; // Use flex for side-by-side layout
+                // Cập nhật UI cho người dùng đã đăng nhập
+                const userData = JSON.parse(user);
+                document.querySelector('.auth-buttons').innerHTML = `
+                    <span style="margin-right: 1rem; color: #333;">Xin chào, ${userData.name}</span>
+                    <button class="btn btn-logout" onclick="handleLogout()">Đăng xuất</button>
+                `;
+                // Kích hoạt chat input nếu chatbot is visible (will handle visibility with toggle function)
+                // document.getElementById('messageInput').disabled = false;
+                // document.getElementById('sendBtn').disabled = false;
+            }
+
+             // Ensure login modal is hidden on load unless explicitly opened
+             document.getElementById('loginModal').style.display = 'none';
+             // Ensure test modal is hidden on load
+             document.getElementById('testModal').style.display = 'none';
+             // Ensure register modal is hidden on load
+             document.getElementById('registerModal').style.display = 'none';
+        });
+
+         // Function to show the main content area after the intro
+         function showMainContent() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                document.getElementById('introSection').style.display = 'none';
+                document.getElementById('mainContentArea').style.display = 'flex'; // Use flex for the layout
+                 // Optionally, hide login/register buttons or show logged-in state if applicable
+                  document.querySelector('.auth-buttons').style.display = 'block'; // Make sure auth buttons are visible in main view
+            } else {
+                showLoginModal(); // Prompt user to login if not logged in
+            }
+         }
+
+        // Xử lý đăng nhập (remains mostly the same, just need to adjust the redirect/display logic)
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const loginForm = document.getElementById('loginModal').querySelector('form');
+            const loading = document.getElementById('loginModal').querySelector('.loading');
+            const successMessage = document.getElementById('loginModal').querySelector('.success-message');
+            
+            // Reset error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            let hasError = false;
+
+            // Validate email
+            if (!email) {
+                document.querySelector('#loginEmail').parentElement.classList.add('error');
+                hasError = true;
+            }
+
+            // Validate password
+            if (!password) {
+                document.querySelector('#loginPassword').parentElement.classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Show loading
+            loading.style.display = 'block';
+            loginForm.style.display = 'none';
+
+            // Simulate API call
+            setTimeout(() => {
+                // Store user data
+                const userData = {
+                    email: email,
+                    name: email.split('@')[0], // Basic name extraction
+                    lastLogin: new Date().toISOString()
+                };
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                // Show success message
+                loading.style.display = 'none';
+                successMessage.style.display = 'block';
+
+                // Close modal and show main content area
+                setTimeout(() => {
+                    closeModal('loginModal');
+                    // Redirect to AI.html
+                    window.location.href = 'AI.html';
+                }, 1500); // Show success for 1.5 seconds
+            }, 1500); // Simulate login delay
+        }
+
+        // Xử lý đăng xuất
+        function handleLogout() {
+            localStorage.removeItem('user');
+            window.location.reload(); // Reload page to show intro/login state
+        }
+
+        // Thêm hàm toggle password (remains the same)
+        function togglePassword() {
+            const passwordInput = document.getElementById('loginPassword');
+            const toggleIcon = document.querySelector('.toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Function to toggle visibility of the chatbot section
+        function toggleChatbot() {
+            const chatbotSection = document.getElementById('chatbotSection');
+            const toggleButton = document.getElementById('toggleChatbotBtn');
+            const testsSection = document.getElementById('testsSection'); // Assuming you add an ID to tests section
+             const curriculumDisplay = document.getElementById('curriculumDisplay'); // Assuming you add an ID
+
+            if (chatbotSection.style.display === 'none' || chatbotSection.style.display === '') {
+                chatbotSection.style.display = 'block';
+                toggleButton.textContent = ' ẩn Trợ lý AI'; // Change button text
+                 // Hide tests and curriculum when chatbot is open
+                testsSection.style.display = 'none';
+                 curriculumDisplay.style.display = 'none';
+                 // Enable chat input if user is logged in
+                 const user = localStorage.getItem('user');
+                 if (user) {
+                     document.getElementById('messageInput').disabled = false;
+                     document.getElementById('sendBtn').disabled = false;
+                 }
+            } else {
+                chatbotSection.style.display = 'none';
+                toggleButton.textContent = '💬 Trợ lý AI'; // Change button text back
+                 // Show tests and curriculum when chatbot is closed
+                 testsSection.style.display = 'block';
+                  curriculumDisplay.style.display = 'block'; // Or maybe only tests section? Adjust as needed.
+                  // Disable chat input
+                 document.getElementById('messageInput').disabled = true;
+                 document.getElementById('sendBtn').disabled = true;
+            }
+        }
+
+        // Function to toggle visibility of grade lists
+        function toggleGrades(subjectId) {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const gradeList = document.getElementById(subjectId + 'Grades');
+                const subjectItems = document.querySelectorAll('.subject-list li');
+                
+                // Hide all other grade lists
+                subjectItems.forEach(item => {
+                    const ul = item.querySelector('.grade-list');
+                    if (ul && ul.id !== subjectId + 'Grades') {
+                        ul.style.display = 'none';
+                    }
+                });
+
+                // Toggle the clicked grade list
+                if (gradeList.style.display === 'none' || gradeList.style.display === '') {
+                    gradeList.style.display = 'block';
+                } else {
+                    gradeList.style.display = 'none';
+                }
+            } else {
+                showLoginModal(); // Prompt user to login
+            }
+        }
+
+        // Function to select curriculum (placeholder for now)
+        function selectCurriculum(subject, grade) {
+             const user = localStorage.getItem('user');
+             if (user) {
+                const curriculumDisplay = document.getElementById('curriculumDisplay');
+                 // Hide other sections (chatbot and tests)
+                 document.getElementById('chatbotSection').style.display = 'none';
+                 document.getElementById('toggleChatbotBtn').textContent = '💬 Trợ lý AI';
+                 document.getElementById('testsSection').style.display = 'none'; // Assuming you add an ID
+
+                // Update curriculum display area
+                curriculumDisplay.style.display = 'block';
+                curriculumDisplay.innerHTML = '';
+
+                // Add title
+                const title = document.createElement('h2');
+                title.textContent = `Chương trình học ${subject.charAt(0).toUpperCase() + subject.slice(1)} - Lớp ${grade}`;
+                curriculumDisplay.appendChild(title);
+
+                // Load and display knowledge data
+                const subjectKnowledge = knowledgeData[subject];
+                if (subjectKnowledge && subjectKnowledge[grade]) {
+                    const knowledgeTitle = document.createElement('h3');
+                    knowledgeTitle.textContent = 'Nội dung kiến thức:';
+                    curriculumDisplay.appendChild(knowledgeTitle);
+                    const knowledgeItems = subjectKnowledge[grade];
+                    knowledgeItems.forEach(item => {
+                        const p = document.createElement('p');
+                        p.textContent = item.content;
+                        curriculumDisplay.appendChild(p);
+                    });
+                } else {
+                    const p = document.createElement('p');
+                    p.textContent = 'Chưa có dữ liệu kiến thức cho phần này.';
+                    curriculumDisplay.appendChild(p);
+                }
+
+                // Add back button
+                const backButton = document.createElement('button');
+                backButton.textContent = 'Quay về trang chính';
+                backButton.classList.add('section-toggle-button'); // Reuse button style
+                backButton.style.marginTop = '20px';
+                backButton.onclick = backToMainContentAreaView;
+                curriculumDisplay.appendChild(backButton);
+
+             } else {
+                showLoginModal(); // Prompt user to login
+             }
+        }
+
+         // Function to go back to the main content area view (tests, curriculum placeholder)
+         function backToMainContentAreaView() {
+             const curriculumDisplay = document.getElementById('curriculumDisplay');
+             const testsSection = document.getElementById('testsSection');
+             const toggleChatbotBtn = document.getElementById('toggleChatbotBtn');
+             
+             // Hide curriculum display
+             curriculumDisplay.style.display = 'none';
+
+             // Show tests section and chatbot toggle button (if needed)
+             testsSection.style.display = 'block';
+             // toggleChatbotBtn.style.display = 'block'; // Assuming this should be visible in main view
+
+             // Reset curriculum display content to placeholder
+             curriculumDisplay.innerHTML = `<h2>Chương trình học</h2><p>Chọn một môn học và lớp để xem chương trình học.</p>`;
+             // Ensure it's visible next time something is selected
+             // curriculumDisplay.style.display = 'block'; // No need to hide it here, it's hidden above.
+         }
+
+        // Add IDs to tests section for easier toggling
+        document.querySelector('.tests-section').id = 'testsSection';
+
+        // Function to show the login modal
+        function showLoginModal() {
+            closeAllModals(); // Close other modals
+            // Explicitly hide register and test modals
+            document.getElementById('registerModal').style.display = 'none';
+            document.getElementById('testModal').style.display = 'none';
+
+            // Add a small delay before showing the modal
+            setTimeout(() => {
+                document.getElementById('loginModal').style.display = 'block';
+            }, 50); // 50ms delay
+        }
+
+        // Function to close a modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Re-add onclick for login button in header to call showLoginModal
+        document.querySelector('.btn-login').onclick = showLoginModal;
+
+        // Re-add onclick for register button in header to call showRegisterModal (assuming it exists)
+        // If showRegisterModal doesn't exist, you'll need to create it similarly to showLoginModal
+        // For now, assuming a showRegisterModal function exists or will be created.
+        // document.querySelector('.btn-register').onclick = showRegisterModal;
+         function showRegisterModal() {
+             closeAllModals(); // Close other modals
+              // Add a small delay before showing the modal
+              setTimeout(() => {
+                   document.getElementById('registerModal').style.display = 'block';
+              }, 50); // 50ms delay
+           }
+
+         // Function to open the test modal
+         function openSubjectTest(subject) {
+             const user = localStorage.getItem('user');
+             if (user) {
+                 // Close other modals before opening the test modal
+                 closeAllModals();
+                 // Add a small delay before showing the modal
+                 setTimeout(() => {
+                     document.getElementById('testModal').style.display = 'block';
+                     // Set test info from testConfig (assuming testConfig is accessible or passed)
+                     // Access testConfig from test.js or pass necessary info
+                     const config = testConfig[subject]; // Make sure testConfig is available in this scope or passed
+                     if (!config) return; // Handle if subject config is not found
+
+                     document.getElementById('testTitle').textContent = config.title;
+                     document.getElementById('testTime').textContent = config.time;
+                     document.getElementById('testQuestions').textContent = config.questions;
+
+                     // Load actual test questions using the function from test.js
+                     loadTestQuestions(subject);
+
+                     // Ensure test content is visible and result content is hidden initially
+                     document.getElementById('testContent').style.display = 'block';
+                     document.getElementById('testResultContent').style.display = 'none';
+                     document.getElementById('testTimer').style.display = 'block';
+                     document.getElementById('submitTestButton').style.display = 'block';
+
+                     // Start the timer (call the function from test.js)
+                     startTimer(config.time);
+                 }, 50); // 50ms delay
+             } else {
+                 showLoginModal(); // Prompt user to login
+             }
+         }
+
+         // Helper function to close all modals
+         function closeAllModals() {
+             const modals = document.querySelectorAll('.modal');
+             modals.forEach(modal => {
+                 modal.style.display = 'none';
+             });
+         }
+
+        // Function to populate subjects and tests from learningData.js
+        function populateLearningContent() {
+            const subjectListUl = document.querySelector('.subject-list');
+            subjectListUl.innerHTML = ''; // Clear existing content
+
+            subjects.forEach(subject => {
+                const subjectLi = document.createElement('li');
+                subjectLi.innerHTML = `${subject.icon} ${subject.name}`;
+                subjectLi.onclick = () => toggleGrades(subject.id);
+
+                const gradeUl = document.createElement('ul');
+                gradeUl.id = `${subject.id}Grades`;
+                gradeUl.classList.add('grade-list');
+                gradeUl.style.display = 'none';
+
+                subject.grades.forEach(grade => {
+                    const gradeLi = document.createElement('li');
+                    gradeLi.textContent = `Lớp ${grade}`;
+                    gradeLi.onclick = () => selectCurriculum(subject.id, grade);
+                    gradeUl.appendChild(gradeLi);
+                });
+
+                subjectLi.appendChild(gradeUl);
+                subjectListUl.appendChild(subjectLi);
+            });
+
+            const testsSectionDiv = document.querySelector('.tests-section');
+            const testsContainer = document.createElement('div'); // Create a container for test cards
+            testsContainer.classList.add('test-card-container'); // Add a class for styling if needed
+
+            tests.forEach(test => {
+                const testCardDiv = document.createElement('div');
+                testCardDiv.classList.add('subject-card');
+                testCardDiv.onclick = () => openSubjectTest(test.id);
+                testCardDiv.innerHTML = `
+                    <h3>${test.icon} ${test.name}</h3>
+                    <p>${test.questions} câu hỏi • ${test.time} phút</p>
+                `;
+                testsContainer.appendChild(testCardDiv);
+            });
+
+            // Find the h2 element and insert the tests container after it
+            const testsTitle = testsSectionDiv.querySelector('h2');
+            if (testsTitle) {
+                testsTitle.parentNode.insertBefore(testsContainer, testsTitle.nextSibling);
+            } else {
+                testsSectionDiv.appendChild(testsContainer);
+            }
+        }
+
+        // Call the populate function on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', populateLearningContent);
+    </script>
+    <script>
+        // JavaScript for movable AI button
+        const movableAIButton = document.getElementById('movableAIButton');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        movableAIButton.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - movableAIButton.getBoundingClientRect().left;
+            offsetY = e.clientY - movableAIButton.getBoundingClientRect().top;
+            movableAIButton.style.transition = 'none'; // Disable transition while dragging
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            let newX = e.clientX - offsetX;
+            let newY = e.clientY - offsetY;
+
+            // Keep the button within the viewport
+            const maxX = window.innerWidth - movableAIButton.offsetWidth;
+            const maxY = window.innerHeight - movableAIButton.offsetHeight;
+
+            newX = Math.max(0, Math.min(newX, maxX));
+            newY = Math.max(0, Math.min(newY, maxY));
+
+            movableAIButton.style.left = newX + 'px';
+            movableAIButton.style.top = newY + 'px';
+            movableAIButton.style.right = 'auto'; // Override CSS right property
+            movableAIButton.style.bottom = 'auto'; // Override CSS bottom property
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                movableAIButton.style.transition = 'transform 0.2s ease'; // Re-enable transition
+            }
+        });
+
+        // Prevent dragging when clicking the button to toggle chatbot
+         movableAIButton.addEventListener('click', (e) => {
+             if (!isDragging) {
+                 const user = localStorage.getItem('user');
+                 if (user) {
+                      toggleChatbot(); // Call the existing toggleChatbot function
+                 } else {
+                     showLoginModal(); // Prompt user to login
+                 }
+             }
+         });
+
+    </script>
+</body>
+</html>
