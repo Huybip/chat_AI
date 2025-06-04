@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - AI Learning Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #357ABD;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --light-gray: #eee;
+            --white: #fff;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header .logo {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .form-group.error input {
+            border-color: var(--error-color);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .login-button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-button.primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .login-button.secondary {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-color);
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--light-gray);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            color: var(--success-color);
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+            }
+
+            .login-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Add new styles for forgot password modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .attempts-warning {
+            color: var(--error-color);
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .alternative-login {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--light-gray);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h1>Đăng nhập</h1>
+            <p>Chào mừng bạn quay trở lại!</p>
+        </div>
+
+        <form class="login-form" id="login-form">
+            <div class="form-group">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" required>
+                <div class="error-message">Vui lòng nhập tên đăng nhập</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" required>
+                <div class="error-message">Vui lòng nhập mật khẩu</div>
+            </div>
+
+            <div class="attempts-warning" id="attempts-warning">
+                Còn <span id="remaining-attempts">5</span> lần thử đăng nhập
+            </div>
+
+            <div class="alternative-login" id="alternative-login">
+                <h3>Đăng nhập bằng email</h3>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="button" class="login-button primary" id="email-login">
+                    <i class="fas fa-envelope"></i>
+                    Gửi mã xác thực
+                </button>
+            </div>
+
+            <div class="login-buttons">
+                <button type="submit" class="login-button primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Đăng nhập
+                </button>
+                <button type="button" class="login-button secondary" id="register-button">
+                    <i class="fas fa-user-plus"></i>
+                    Đăng ký
+                </button>
+            </div>
+        </form>
+
+        <div class="loading">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <div class="success-message">
+            Đăng nhập thành công! Đang chuyển hướng...
+        </div>
+
+        <div class="login-footer">
+            <p>Quên mật khẩu? <a href="#" id="forgot-password-link">Khôi phục ngay</a></p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgot-password-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Khôi phục mật khẩu</h2>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="recovery-email">Email đăng ký</label>
+                    <input type="email" id="recovery-email" required>
+                </div>
+                <button type="submit" class="login-button primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Gửi link khôi phục
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const loading = document.querySelector('.loading');
+            const successMessage = document.querySelector('.success-message');
+            const registerButton = document.getElementById('register-button');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const forgotPasswordModal = document.getElementById('forgot-password-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+            const attemptsWarning = document.getElementById('attempts-warning');
+            const alternativeLogin = document.getElementById('alternative-login');
+            const remainingAttemptsSpan = document.getElementById('remaining-attempts');
+
+            let loginAttempts = 0;
+            const MAX_ATTEMPTS = 5;
+
+            // Kiểm tra trạng thái đăng nhập
+            if (localStorage.getItem('user')) {
+                window.location.href = 'index.html';
+            }
+
+            // Mock user database
+            const mockUsers = {
+                'admin': 'password123',
+                'user1': 'pass123'
+            };
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset error states
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('error');
+                });
+
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                let hasError = false;
+
+                // Validate username
+                if (!username) {
+                    document.querySelector('#username').parentElement.classList.add('error');
+                    hasError = true;
+                }
+
+                // Validate password
+                if (!password) {
+                    document.querySelector('#password').parentElement.classList.add('error');
+                    hasError = true;
+                }
+
+                if (hasError) return;
+
+                // Show loading
+                loading.style.display = 'block';
+                loginForm.style.display = 'none';
+
+                // Simulate API call
+                setTimeout(() => {
+                    // Check credentials
+                    if (mockUsers[username] === password) {
+                        // Store user data
+                        const userData = {
+                            username: username,
+                            name: username,
+                            lastLogin: new Date().toISOString()
+                        };
+                        localStorage.setItem('user', JSON.stringify(userData));
+
+                        // Show success message
+                        loading.style.display = 'none';
+                        successMessage.style.display = 'block';
+
+                        // Reset login attempts
+                        loginAttempts = 0;
+                        attemptsWarning.style.display = 'none';
+                        alternativeLogin.style.display = 'none';
+
+                        // Redirect after 1.5 seconds
+                        setTimeout(() => {
+                            window.location.href = 'main.html';
+                        }, 1500);
+                    } else {
+                        // Handle failed login
+                        loginAttempts++;
+                        remainingAttemptsSpan.textContent = MAX_ATTEMPTS - loginAttempts;
+                        
+                        if (loginAttempts >= MAX_ATTEMPTS) {
+                            // Show alternative login
+                            alternativeLogin.style.display = 'block';
+                            attemptsWarning.style.display = 'none';
+                        } else {
+                            attemptsWarning.style.display = 'block';
+                        }
+
+                        // Show error message
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'error-message';
+                        errorMessage.style.display = 'block';
+                        errorMessage.textContent = 'Tên đăng nhập hoặc mật khẩu không đúng';
+                        loginForm.insertBefore(errorMessage, loginForm.firstChild);
+
+                        // Reset form
+                        loading.style.display = 'none';
+                        loginForm.style.display = 'block';
+                    }
+                }, 1500);
+            });
+
+            // Handle forgot password modal
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                forgotPasswordModal.style.display = 'flex';
+            });
+
+            closeModal.addEventListener('click', function() {
+                forgotPasswordModal.style.display = 'none';
+            });
+
+            forgotPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('recovery-email').value.trim();
+                
+                // Simulate sending recovery email
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    alert('Link khôi phục mật khẩu đã được gửi đến email của bạn!');
+                    forgotPasswordModal.style.display = 'none';
+                }, 1500);
+            });
+
+            // Handle register button
+            registerButton.addEventListener('click', function() {
+                alert('Chức năng đăng ký sẽ được phát triển trong phiên bản tiếp theo!');
+            });
+
+            // Handle email login
+            document.getElementById('email-login').addEventListener('click', function() {
+                const email = document.getElementById('email').value.trim();
+                if (!email) {
+                    alert('Vui lòng nhập email của bạn');
+                    return;
+                }
+                
+                // Simulate sending verification code
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    alert('Mã xác thực đã được gửi đến email của bạn!');
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html> 
